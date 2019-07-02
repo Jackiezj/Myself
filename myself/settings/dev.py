@@ -141,7 +141,15 @@ CACHES = {
 			"CLIENT_CLASS": "django_redis.client.DefaultClient",
 			"PASSWORD": ""
 		}
-	}
+	},
+    "verify_codes": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": ""
+        }
+    }
 }
 # 指定session的保存位置,3选1
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'  # session保存在缓存中
