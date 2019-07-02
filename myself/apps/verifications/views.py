@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from myself.libs.captcha.captcha import captcha
 from verifications.constants import IMAGE_CODE_REDIS_EXPIRES, SMS_CODE_REDIS_EXPIRES
 from verifications.serializer import ImageCodeCheckSerializer
+from celery_tasks.sms.tasks import send_sms_code
 
 
 class ImageCode(APIView):
@@ -56,7 +57,8 @@ class SMSCode(GenericAPIView):
         pl.setex('sms_code_%s' % mobile, SMS_CODE_REDIS_EXPIRES, sms_code)
         pl.setex('send_flag_%s' % mobile, SMS_CODE_REDIS_EXPIRES, 1)
         pl.execute()
-        # TODO 异步发送短信验证码
+        # 异步发送短信验证码
+        send_sms_code.delay(mobile, sms_code)
 
         return Response({'message': 'OK'})
 
