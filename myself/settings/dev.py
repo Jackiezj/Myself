@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
+import datetime
 
 import os
 import sys
@@ -40,12 +41,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'corsheaders',
 
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -201,6 +204,22 @@ LOGGING = {
 # DRF异常处理
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'myself.utils.exceptions.exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {  # 设置签名有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
 }
 
 AUTH_USER_MODEL = 'users.User'  # 告知Django认证系统使用我们自定义的模型
+
+# CORS
+CORS_ORIGIN_WHITELIST = (
+    'http://119.3.209.59:5000',
+    'http://119.3.209.59',
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
